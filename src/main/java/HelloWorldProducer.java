@@ -1,13 +1,12 @@
+import domain.AlertCallback;
 import domain.AlertKeySerde;
 import domain.AlertLevelPartitioner;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
@@ -26,11 +25,9 @@ public class HelloWorldProducer {
         props.put("schema.registry.url", "http://localhost:8081");
 
         try (final Producer<domain.Alert, String> producer = new KafkaProducer<>(props)) {
-            for (int i = 0; i < 10; i++) {
-                final domain.Alert alert = new domain.Alert(0, "Stage 0", "CRITICAL", "Stage "+i+" stopped CRITICAL");
-                final ProducerRecord<domain.Alert, String> record = new ProducerRecord<>("kinaction_schematest", alert, alert.getAlertMessage());
-                producer.send(record);
-            }
+            final domain.Alert alert = new domain.Alert(0, "Stage 0", "CRITICAL", "Stage 0 stopped CRITICAL");
+            final ProducerRecord<domain.Alert, String> record = new ProducerRecord<>("kinaction_schematest", alert, alert.getAlertMessage());
+            producer.send(record, new AlertCallback());
         }
     }
 }

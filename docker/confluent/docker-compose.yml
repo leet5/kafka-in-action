@@ -2,7 +2,7 @@ version: "3"
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.4.0
+    image: confluentinc/cp-zookeeper
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -10,9 +10,13 @@ services:
     environment:
       ZOOKEEPER_TICK_TIME: 2000
       ZOOKEEPER_CLIENT_PORT: 2181
+    volumes:
+      - zk-data:/var/lib/zookeeper/data
+      - zk-secrets:/etc/zookeeper/secrets
+      - zk-log:/var/lib/zookeeper/log
 
   broker-1:
-    image: confluentinc/cp-server:5.4.0
+    image: confluentinc/cp-server
     hostname: broker-1
     container_name: broker-1
     depends_on:
@@ -37,9 +41,12 @@ services:
       CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+    volumes:
+      - broker1-data:/var/lib/kafka/data
+      - broker1-secrets:/etc/kafka/secrets
 
   broker-2:
-    image: confluentinc/cp-server:5.4.0
+    image: confluentinc/cp-server
     hostname: broker-2
     container_name: broker-2
     depends_on:
@@ -64,9 +71,12 @@ services:
       CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+    volumes:
+      - broker2-data:/var/lib/kafka/data
+      - broker2-secrets:/etc/kafka/secrets
 
   broker-3:
-    image: confluentinc/cp-server:5.4.0
+    image: confluentinc/cp-server
     hostname: broker-3
     container_name: broker-3
     depends_on:
@@ -91,16 +101,22 @@ services:
       CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+    volumes:
+      - broker3-data:/var/lib/kafka/data
+      - broker3-secrets:/etc/kafka/secrets
 
   kafka-tools:
-    image: confluentinc/cp-kafka:5.4.0
+    image: confluentinc/cp-kafka
     hostname: kafka-tools
     container_name: kafka-tools
     command: ["tail", "-f", "/dev/null"]
     network_mode: "host"
+    volumes:
+      - tools-data:/var/lib/kafka/data
+      - tools-secrets:/etc/kafka/secrets
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:5.4.0
+    image: confluentinc/cp-schema-registry
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -113,10 +129,11 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://broker-1:9092"
-#      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+    volumes:
+      - schema-secrets:/etc/schema-registry/secrets
 
   control-center:
-    image: confluentinc/cp-enterprise-control-center:5.4.0
+    image: confluentinc/cp-enterprise-control-center
     hostname: control-center
     container_name: control-center
     depends_on:
@@ -136,3 +153,20 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 3
       CONFLUENT_METRICS_TOPIC_REPLICATION: 3
       PORT: 9021
+
+volumes:
+  zk-data:
+  zk-secrets:
+  zk-log:
+
+  broker1-data:
+  broker1-secrets:
+  broker2-data:
+  broker2-secrets:
+  broker3-data:
+  broker3-secrets:
+
+  tools-data:
+  tools-secrets:
+
+  schema-secrets:

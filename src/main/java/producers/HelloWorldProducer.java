@@ -1,3 +1,5 @@
+package producers;
+
 import domain.AlertCallback;
 import domain.AlertKeySerde;
 import domain.AlertLevelPartitioner;

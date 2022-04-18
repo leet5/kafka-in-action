@@ -1,3 +1,5 @@
+package producers;
+
 import domain.AlertCallback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;

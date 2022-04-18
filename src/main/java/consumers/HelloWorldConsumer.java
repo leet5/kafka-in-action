@@ -1,3 +1,6 @@
+package consumers;
+
+import domain.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -15,7 +18,7 @@ public class HelloWorldConsumer {
 
     public static void main(String[] args) {
         final Properties props = new Properties();
-        props.put(BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(BOOTSTRAP_SERVERS_CONFIG, "localhost:19093");
         props.put(GROUP_ID_CONFIG, "group-1");
         props.put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.LongDeserializer");
         props.put(VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");

@@ -20,11 +20,12 @@ public class AuditConsumer {
 
     public static void main(String[] args) {
         final var props = new Properties();
-        props.put(BOOTSTRAP_SERVERS_CONFIG, "localhost:19093");
+        props.put(BOOTSTRAP_SERVERS_CONFIG, "localhost:19093,localhost:29093,localhost:39093");
         props.put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         props.put(VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         props.put(ENABLE_AUTO_COMMIT_CONFIG, "false");
         props.put(GROUP_ID_CONFIG, "audit_group");
+        props.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         final var consumer = new AuditConsumer();
         consumer.consume(props);

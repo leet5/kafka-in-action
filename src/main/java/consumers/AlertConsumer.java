@@ -2,6 +2,7 @@ package consumers;
 
 import domain.Alert;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
@@ -14,6 +15,8 @@ public class AlertConsumer {
     public static final String TOPIC = "kinaction_alert";
 
     public ConsumerRecords<Alert, String> getAlertMessages(Properties properties) {
+        properties.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, AlertConsumerInterceptor.class.getName());
+
         try (var consumer = new KafkaConsumer<Alert, String>(properties)) {
             consumer.subscribe(List.of(TOPIC));
             return consumer.poll(Duration.ofMillis(2500));

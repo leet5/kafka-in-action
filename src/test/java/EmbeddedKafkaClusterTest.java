@@ -1,5 +1,6 @@
 import consumers.AlertConsumer;
 import domain.AlertKeySerde;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -15,14 +16,16 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
+@Slf4j
 public class EmbeddedKafkaClusterTest {
     private static final int BROKER_NUMBER = 3;
     private static final int PARTITION_NUMBER = 3;
     private static final int REPLICATION_NUMBER = 3;
+
     private static final String TOPIC = "kinaction_alert";
+    private static final String HEADER = "kinactionTraceId";
 
     public static final EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(BROKER_NUMBER);
 
@@ -52,7 +55,7 @@ public class EmbeddedKafkaClusterTest {
         try {
             producer.sendMessage(producerProps);
         } catch (ExecutionException e) {
-            fail("kinaction_error EmbeddedKafkaCluster exception" + e.getMessage());
+            fail("kinaction_error EmbeddedKafkaCluster exception " + e.getMessage());
         }
 
         final var consumer = new AlertConsumer();
@@ -62,5 +65,7 @@ public class EmbeddedKafkaClusterTest {
 
         assertEquals(0, results.get(0).partition());
         assertEquals("Stage 1 stopped", results.get(0).value());
+
+        assertNotNull(results.get(0).headers().lastHeader(HEADER));
     }
 }
